@@ -1,31 +1,34 @@
 
-import { useState } from 'react';
-import { LoginForm } from '@/components/auth/LoginForm';
+import { useAuth } from '@/hooks/useAuth';
+import { AuthPage } from '@/components/auth/AuthPage';
 import { Dashboard } from '@/components/dashboard/Dashboard';
 
 const Index = () => {
-  const [user, setUser] = useState<{
-    id: string;
-    name: string;
-    email: string;
-    role: 'student' | 'instructor' | 'admin';
-  } | null>(null);
+  const { user, loading, profile } = useAuth();
 
-  const handleLogin = (userData: any) => {
-    setUser(userData);
-    console.log('User logged in:', userData);
-  };
-
-  const handleLogout = () => {
-    setUser(null);
-    console.log('User logged out');
-  };
-
-  if (!user) {
-    return <LoginForm onLogin={handleLogin} />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
   }
 
-  return <Dashboard user={user} onLogout={handleLogout} />;
+  if (!user) {
+    return <AuthPage />;
+  }
+
+  return (
+    <Dashboard 
+      user={{
+        id: user.id,
+        name: profile?.full_name || user.email || 'User',
+        email: user.email || '',
+        role: profile?.role || 'student'
+      }} 
+      onLogout={() => {}} // This will be handled by the auth context
+    />
+  );
 };
 
 export default Index;

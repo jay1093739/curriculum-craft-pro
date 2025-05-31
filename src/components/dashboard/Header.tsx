@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { useAuth } from '@/hooks/useAuth';
 
 interface HeaderProps {
   user: {
@@ -21,7 +22,9 @@ interface HeaderProps {
   onLogout: () => void;
 }
 
-export const Header = ({ user, onLogout }: HeaderProps) => {
+export const Header = ({ user }: HeaderProps) => {
+  const { signOut } = useAuth();
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
@@ -69,7 +72,7 @@ export const Header = ({ user, onLogout }: HeaderProps) => {
                 Notifications
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={onLogout}>
+              <DropdownMenuItem onClick={signOut}>
                 <LogOut className="mr-2 h-4 w-4" />
                 Sign Out
               </DropdownMenuItem>
