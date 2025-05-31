@@ -7,16 +7,21 @@ export const useUsers = () => {
   return useQuery({
     queryKey: ['users'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .select(`
-          *,
-          enrollments(count),
-          courses(count)
-        `);
-      
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .select(`
+            *,
+            enrollments(count),
+            courses(count)
+          `);
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        return [];
+      }
     }
   });
 };
@@ -26,15 +31,20 @@ export const useUpdateUserRole = () => {
   
   return useMutation({
     mutationFn: async ({ userId, role }: { userId: string, role: string }) => {
-      const { data, error } = await supabase
-        .from('profiles')
-        .update({ role })
-        .eq('id', userId)
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('profiles')
+          .update({ role })
+          .eq('id', userId)
+          .select()
+          .single();
+        
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.error('Error updating user role:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['users'] });

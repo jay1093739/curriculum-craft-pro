@@ -4,8 +4,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { useCourses, useEnrollInCourse } from '@/hooks/useCourses';
-import { useUserEnrollments } from '@/hooks/useEnrollments';
+import { useCourses } from '@/hooks/useCourses';
+import { useUserEnrollments, useEnrollInCourse } from '@/hooks/useEnrollments';
 import { useAuth } from '@/hooks/useAuth';
 import { BookOpen, Users, Clock, Star, Search, DollarSign } from 'lucide-react';
 
@@ -17,7 +17,7 @@ export const CoursesAPI = () => {
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredCourses = courses?.filter(course =>
-    course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 

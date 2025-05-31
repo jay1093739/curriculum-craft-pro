@@ -12,16 +12,21 @@ export const useUserCertificates = () => {
     queryFn: async () => {
       if (!user) return [];
       
-      const { data, error } = await supabase
-        .from('certificates')
-        .select(`
-          *,
-          course:courses(title, description)
-        `)
-        .eq('user_id', user.id);
-      
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('certificates')
+          .select(`
+            *,
+            course:courses(title, description)
+          `)
+          .eq('user_id', user.id);
+        
+        if (error) throw error;
+        return data || [];
+      } catch (error) {
+        console.error('Error fetching certificates:', error);
+        return [];
+      }
     },
     enabled: !!user
   });
@@ -35,14 +40,19 @@ export const useIssueCertificate = () => {
     mutationFn: async (courseId: string) => {
       if (!user) throw new Error('Must be logged in');
       
-      const { data, error } = await supabase
-        .from('certificates')
-        .insert([{ user_id: user.id, course_id: courseId }])
-        .select()
-        .single();
-      
-      if (error) throw error;
-      return data;
+      try {
+        const { data, error } = await supabase
+          .from('certificates')
+          .insert([{ user_id: user.id, course_id: courseId }])
+          .select()
+          .single();
+        
+        if (error) throw error;
+        return data;
+      } catch (error) {
+        console.error('Error issuing certificate:', error);
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['certificates'] });

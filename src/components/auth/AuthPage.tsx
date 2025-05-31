@@ -5,42 +5,39 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useAuth } from '@/hooks/useAuth';
-import { BookOpen, GraduationCap } from 'lucide-react';
 
 export const AuthPage = () => {
-  const { signIn, signUp, loading } = useAuth();
-  const [signInData, setSignInData] = useState({ email: '', password: '' });
-  const [signUpData, setSignUpData] = useState({ 
-    email: '', 
-    password: '', 
-    fullName: '', 
-    role: 'student' 
-  });
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn, signUp } = useAuth();
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signIn(signInData.email, signInData.password);
+    setIsLoading(true);
+    await signIn(email, password);
+    setIsLoading(false);
   };
 
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
-    await signUp(signUpData.email, signUpData.password, {
-      full_name: signUpData.fullName,
-      role: signUpData.role
-    });
+    setIsLoading(true);
+    await signUp(email, password, { full_name: fullName });
+    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <GraduationCap className="h-8 w-8 text-blue-600" />
-            <h1 className="text-2xl font-bold text-gray-900">EduPlatform</h1>
-          </div>
-          <p className="text-gray-600">Your gateway to learning</p>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Course Management System
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Sign in to your account or create a new one
+          </p>
         </div>
 
         <Tabs defaultValue="signin" className="w-full">
@@ -52,35 +49,37 @@ export const AuthPage = () => {
           <TabsContent value="signin">
             <Card>
               <CardHeader>
-                <CardTitle>Welcome Back</CardTitle>
-                <CardDescription>Sign in to your account to continue learning</CardDescription>
+                <CardTitle>Sign In</CardTitle>
+                <CardDescription>
+                  Enter your email and password to sign in to your account.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignIn} className="space-y-4">
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="signin-email">Email</Label>
                     <Input
                       id="signin-email"
                       type="email"
-                      value={signInData.email}
-                      onChange={(e) => setSignInData({ ...signInData, email: e.target.value })}
                       placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="signin-password">Password</Label>
                     <Input
                       id="signin-password"
                       type="password"
-                      value={signInData.password}
-                      onChange={(e) => setSignInData({ ...signInData, password: e.target.value })}
                       placeholder="Enter your password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                   </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Signing In...' : 'Sign In'}
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? 'Signing In...' : 'Sign In'}
                   </Button>
                 </form>
               </CardContent>
@@ -90,58 +89,48 @@ export const AuthPage = () => {
           <TabsContent value="signup">
             <Card>
               <CardHeader>
-                <CardTitle>Create Account</CardTitle>
-                <CardDescription>Join our learning community today</CardDescription>
+                <CardTitle>Sign Up</CardTitle>
+                <CardDescription>
+                  Create a new account to get started.
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSignUp} className="space-y-4">
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="signup-name">Full Name</Label>
                     <Input
                       id="signup-name"
                       type="text"
-                      value={signUpData.fullName}
-                      onChange={(e) => setSignUpData({ ...signUpData, fullName: e.target.value })}
                       placeholder="Enter your full name"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="signup-email">Email</Label>
                     <Input
                       id="signup-email"
                       type="email"
-                      value={signUpData.email}
-                      onChange={(e) => setSignUpData({ ...signUpData, email: e.target.value })}
                       placeholder="Enter your email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       required
                     />
                   </div>
-                  <div>
+                  <div className="space-y-2">
                     <Label htmlFor="signup-password">Password</Label>
                     <Input
                       id="signup-password"
                       type="password"
-                      value={signUpData.password}
-                      onChange={(e) => setSignUpData({ ...signUpData, password: e.target.value })}
                       placeholder="Create a password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
                       required
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="signup-role">I am a</Label>
-                    <Select value={signUpData.role} onValueChange={(value) => setSignUpData({ ...signUpData, role: value })}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select your role" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="student">Student</SelectItem>
-                        <SelectItem value="instructor">Instructor</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <Button type="submit" className="w-full" disabled={loading}>
-                    {loading ? 'Creating Account...' : 'Create Account'}
+                  <Button type="submit" className="w-full" disabled={isLoading}>
+                    {isLoading ? 'Creating Account...' : 'Sign Up'}
                   </Button>
                 </form>
               </CardContent>
