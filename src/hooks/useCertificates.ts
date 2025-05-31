@@ -3,13 +3,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { useAuth } from './useAuth';
+import type { Certificate } from '@/types/database';
 
 export const useUserCertificates = () => {
   const { user } = useAuth();
   
   return useQuery({
     queryKey: ['certificates', user?.id],
-    queryFn: async () => {
+    queryFn: async (): Promise<Certificate[]> => {
       if (!user) return [];
       
       try {
@@ -21,10 +22,13 @@ export const useUserCertificates = () => {
           `)
           .eq('user_id', user.id);
         
-        if (error) throw error;
-        return data || [];
+        if (error) {
+          console.error('Error fetching certificates:', error);
+          return [];
+        }
+        return data as Certificate[] || [];
       } catch (error) {
-        console.error('Error fetching certificates:', error);
+        console.error('Error in useUserCertificates:', error);
         return [];
       }
     },
@@ -43,7 +47,7 @@ export const useIssueCertificate = () => {
       try {
         const { data, error } = await supabase
           .from('certificates')
-          .insert([{ user_id: user.id, course_id: courseId }])
+          .insert([{ user_id: user.id, course_id: courseId } as any])
           .select()
           .single();
         

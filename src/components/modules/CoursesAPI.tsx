@@ -8,21 +8,22 @@ import { useCourses } from '@/hooks/useCourses';
 import { useUserEnrollments, useEnrollInCourse } from '@/hooks/useEnrollments';
 import { useAuth } from '@/hooks/useAuth';
 import { BookOpen, Users, Clock, Star, Search, DollarSign } from 'lucide-react';
+import type { Course } from '@/types/database';
 
 export const CoursesAPI = () => {
-  const { data: courses, isLoading: coursesLoading } = useCourses();
-  const { data: enrollments } = useUserEnrollments();
+  const { data: courses = [], isLoading: coursesLoading } = useCourses();
+  const { data: enrollments = [] } = useUserEnrollments();
   const { mutate: enrollInCourse, isPending: enrolling } = useEnrollInCourse();
   const { user } = useAuth();
   const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredCourses = courses?.filter(course =>
+  const filteredCourses = courses.filter((course: Course) =>
     course.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     course.description?.toLowerCase().includes(searchTerm.toLowerCase())
-  ) || [];
+  );
 
   const isEnrolled = (courseId: string) => {
-    return enrollments?.some(enrollment => enrollment.course_id === courseId);
+    return enrollments.some(enrollment => enrollment.course_id === courseId);
   };
 
   if (coursesLoading) {
@@ -51,7 +52,7 @@ export const CoursesAPI = () => {
       </div>
 
       <div className="grid gap-6">
-        {filteredCourses.map((course) => (
+        {filteredCourses.map((course: Course) => (
           <Card key={course.id} className="hover:shadow-lg transition-shadow">
             <CardHeader>
               <div className="flex items-start justify-between">
