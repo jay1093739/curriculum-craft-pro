@@ -35,7 +35,7 @@ export const useUpdateUserRole = () => {
       try {
         const { data, error } = await supabase
           .from('profiles')
-          .update({ role } as any)
+          .update({ role })
           .eq('id', userId)
           .select()
           .single();
@@ -52,6 +52,40 @@ export const useUpdateUserRole = () => {
       toast({
         title: "Success",
         description: "User role updated successfully!"
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive"
+      });
+    }
+  });
+};
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async (userId: string) => {
+      try {
+        const { error } = await supabase
+          .from('profiles')
+          .delete()
+          .eq('id', userId);
+        
+        if (error) throw error;
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['users'] });
+      toast({
+        title: "Success",
+        description: "User deleted successfully!"
       });
     },
     onError: (error: any) => {

@@ -39,7 +39,7 @@ export const useCreateCourse = () => {
       try {
         const { data, error } = await supabase
           .from('courses')
-          .insert([courseData as any])
+          .insert([courseData])
           .select()
           .single();
         
@@ -75,7 +75,7 @@ export const useUpdateCourse = () => {
       try {
         const { data, error } = await supabase
           .from('courses')
-          .update(updateData as any)
+          .update(updateData)
           .eq('id', id)
           .select()
           .single();

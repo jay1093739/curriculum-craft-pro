@@ -47,7 +47,7 @@ export const useIssueCertificate = () => {
       try {
         const { data, error } = await supabase
           .from('certificates')
-          .insert([{ user_id: user.id, course_id: courseId } as any])
+          .insert([{ user_id: user.id, course_id: courseId }])
           .select()
           .single();
         

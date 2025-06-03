@@ -47,7 +47,7 @@ export const useEnrollInCourse = () => {
       try {
         const { data, error } = await supabase
           .from('enrollments')
-          .insert([{ user_id: user.id, course_id: courseId } as any])
+          .insert([{ user_id: user.id, course_id: courseId }])
           .select()
           .single();
         
@@ -83,7 +83,7 @@ export const useUpdateProgress = () => {
       try {
         const { data, error } = await supabase
           .from('enrollments')
-          .update({ progress } as any)
+          .update({ progress })
           .eq('id', enrollmentId)
           .select()
           .single();
